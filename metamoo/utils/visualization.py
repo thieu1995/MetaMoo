@@ -5,9 +5,11 @@
 # --------------------------------------------------%
 
 import matplotlib.pyplot as plt
+from metamoo.core.prototype import Population
 
-def plot_pareto_front(population):
-    objectives = [ind.objectives for ind in population]
+
+def plot_pareto_front(pop: Population):
+    objectives = [agent.objectives for agent in pop.agents]
     obj1 = [obj[0] for obj in objectives]
     obj2 = [obj[1] for obj in objectives]
     
