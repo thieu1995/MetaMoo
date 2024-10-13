@@ -4,8 +4,8 @@
 #       Github: https://github.com/thieu1995        %
 # --------------------------------------------------%
 
-from metamoo.core.prototype import Agent
-from metamoo.utils.sorting import non_dominated_sorting
+from metamoo.core.prototype import Agent, Population
+from metamoo.utils.pareto import classify_agents
 
 
 class NSGA2:
@@ -24,16 +24,16 @@ class NSGA2:
             print(f"Generation {generation + 1}/{self.epoch}")
             
             # Non-dominated sorting
-            fronts = non_dominated_sorting(self.pop)
-            next_population = []
+            fronts, _ = classify_agents(self.pop.agents)
+            pop_next = []
             
             # Generate the next population based on non-dominated sorting and crowding distance
             for front in fronts:
-                if len(next_population) + len(front) > self.pop_size:
+                if len(pop_next) + len(front) > self.pop_size:
                     break
-                next_population.extend(front)
+                pop_next.extend(front)
             
             # Replace population with new generation
-            self.pop = next_population
+            self.pop = Population(pop_next)
 
         return self.pop
