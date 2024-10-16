@@ -18,6 +18,9 @@ class Agent:
         return f"Agent(vars={self.solution}, objs={self.objectives}, " \
                f"violations={self.violations}, feasible={self.feasible})"
 
+    def to_str(self):
+        return f"Agent(objs={self.objectives})"
+
 
 class Population:
     def __init__(self, agents: List[Agent]):
