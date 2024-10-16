@@ -159,7 +159,7 @@ class Problem:
 
     def generate_agent(self) -> Agent:
         agent = self.generate_empty_agent()
-        agent = self.evaluate(agent)
+        agent = self.evaluate_agent(agent)
         return agent
 
     def generate_population(self, n_agents: int = 100) -> Population:
@@ -167,7 +167,7 @@ class Problem:
         pop = [self.generate_agent() for _ in range(n_agents)]
         return Population(pop)
 
-    def evaluate(self, agent: Agent) -> Agent:
+    def evaluate_agent(self, agent: Agent) -> Agent:
         # Evaluate the Agent using all objective functions
         agent.objectives = np.array([obj(agent.solution) for obj in self.objectives])
 
