@@ -124,17 +124,21 @@ class Problem:
         """
         return self.decode_solution_with_bounds(x, self.bounds)
 
-    def correct_solution(self, x: np.ndarray) -> np.ndarray:
-        """
-        Correct the solution to valid bounds
+    # def correct_solution(self, x: np.ndarray) -> np.ndarray:
+    #     """
+    #     Correct the solution to valid bounds
+    #
+    #     Args:
+    #         x (np.ndarray): The real-value solution
+    #
+    #     Returns:
+    #         The corrected solution
+    #     """
+    #     return self.correct_solution_with_bounds(x, self.bounds)
 
-        Args:
-            x (np.ndarray): The real-value solution
-
-        Returns:
-            The corrected solution
-        """
-        return self.correct_solution_with_bounds(x, self.bounds)
+    def repair_agent(self, agent: Agent) -> Agent:
+        agent.solution = self.correct_solution_with_bounds(agent.solution, self.bounds)
+        return agent
 
     def generate_solution(self, encoded: bool = True) -> Union[List, np.ndarray]:
         """
@@ -172,21 +176,21 @@ class Problem:
 
         return agent
 
-    def evaluate(self, agent: Agent, penalty_factor=1.0) -> Agent:
-        # Evaluate the Agent using all objective functions
-        agent.objectives = np.array([obj(agent.solution) for obj in self.objectives])
-
-        # Calculate constraint violations
-        violations = [constraint(agent.solution) for constraint in self.constraints]
-
-        # Track the violation information (positive value indicates violation amount)
-        agent.violations = [0 if v >= 0 else -v for v in violations]
-
-        # Feasibility check: the Agent is feasible if there are no violations
-        agent.feasible = all(v == 0 for v in agent.violations)
-
-        # Apply penalties based on violation amounts
-        for i, violation in enumerate(agent.violations):
-            if violation > 0:
-                agent.objectives += penalty_factor * violation
-        return agent
+    # def evaluate(self, agent: Agent, penalty_factor=1.0) -> Agent:
+    #     # Evaluate the Agent using all objective functions
+    #     agent.objectives = np.array([obj(agent.solution) for obj in self.objectives])
+    #
+    #     # Calculate constraint violations
+    #     violations = [constraint(agent.solution) for constraint in self.constraints]
+    #
+    #     # Track the violation information (positive value indicates violation amount)
+    #     agent.violations = [0 if v >= 0 else -v for v in violations]
+    #
+    #     # Feasibility check: the Agent is feasible if there are no violations
+    #     agent.feasible = all(v == 0 for v in agent.violations)
+    #
+    #     # Apply penalties based on violation amounts
+    #     for i, violation in enumerate(agent.violations):
+    #         if violation > 0:
+    #             agent.objectives += penalty_factor * violation
+    #     return agent
