@@ -8,7 +8,7 @@ from typing import List
 import time
 import numpy as np
 from metamoo.core.prototype import Agent
-from metamoo.utils.pareto import non_dominated_sorting
+from metamoo.utils.pareto import non_dominated_sorting as nds
 
 
 class Optimizer:
@@ -17,13 +17,14 @@ class Optimizer:
         self.generator = np.random.default_rng(self.seed)
         self.repairer = repairer
         self.epoch, self.pop_size = None, None
-        self.problem, self.pop, self.fronts = None, None, None
+        self.problem, self.pop = None, None
+        self.fronts_indexes, self.fronts_sorted = None, None
         self.nfe_per_epoch, self.nfe_counter = 0, 0
 
     def initialization(self):
         self.pop = self.problem.generate_population(self.pop_size)
         # Perform non-dominated sorting
-        self.fronts = self.non_dominated_sorting(self.pop.agents, return_index=True)
+        self.fronts_indexes, self.fronts_sorted = self.non_dominated_sorting(self.pop.agents)
 
     def solve(self, problem):
         self.problem = problem
@@ -35,12 +36,12 @@ class Optimizer:
             self.evolve(epoch)
 
             # Update fronts
-            self.fronts = self.non_dominated_sorting(self.pop.agents, return_index=True)
+            self.fronts_indexes, self.fronts_sorted = self.non_dominated_sorting(self.pop.agents)
 
             time_epoch = time.perf_counter() - time_epoch
-            self.printer(epoch, self.fronts, time_epoch)
+            self.printer(epoch, self.fronts_sorted, time_epoch)
 
-        return self.fronts
+        return self.fronts_sorted
 
     def evolve(self, epoch):
         pass
@@ -48,19 +49,23 @@ class Optimizer:
     def callback(self):
         pass
 
-    def printer(self, epoch, fronts, time_epoch=None, diversity=None):
+    def printer(self, epoch, fronts, time_epoch=None, diversity=None, print_best_front=True):
+        if print_best_front:
+            bf = "\n\tBest front: " + "\n\t".join([agent.to_str() for agent in fronts[0]])
+        else:
+            bf = ""
         print(f"Epoch: {epoch}, Best front size: {len(fronts[0])}, "
-              f"1st best non-dominated solution: {self.pop[fronts[0][0]].objectives}, "
-              f"Time: {time_epoch:.3f} seconds, Diversity: {diversity}.")
+              f"1st best non-dominated solution: {fronts[0][0].objectives}, "
+              f"Time: {time_epoch:.4f} seconds, Diversity: {diversity}. {bf}")
 
     @staticmethod
-    def non_dominated_sorting(agents: List[Agent], return_index: bool = True):
-        return non_dominated_sorting(agents=agents, return_index=return_index)
+    def non_dominated_sorting(agents: List[Agent]):
+        return nds(agents=agents)
 
     @staticmethod
     def find_extreme_points(agents: List[Agent]):
-        fronts, _ = non_dominated_sorting(agents)
-        return fronts[0]
+        fronts_indexes, fronts_sorted = nds(agents)
+        return fronts_sorted[0]
 
     def repair_agent(self, agent: Agent) -> Agent:
         """
