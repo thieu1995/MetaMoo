@@ -18,3 +18,4 @@ from metamoo.core.crossover import UniformCrossover, ArithmeticCrossover, OnePoi
 from metamoo.algorithms.nsga import NSGA
 from metamoo.visualizer.scatter import ScatterPlot
 from metamoo.visualizer.heatmap import HeatmapPlot
+from metamoo.visualizer.radar import RadarPlot
