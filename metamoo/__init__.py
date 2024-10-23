@@ -19,3 +19,4 @@ from metamoo.algorithms.nsga import NSGA
 from metamoo.visualizer.scatter import ScatterPlot
 from metamoo.visualizer.heatmap import HeatmapPlot
 from metamoo.visualizer.radar import RadarPlot
+from metamoo.visualizer.histogram import HistogramPlot
