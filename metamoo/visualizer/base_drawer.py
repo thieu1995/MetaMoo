@@ -12,19 +12,15 @@ from metamoo import Agent
 
 
 class BaseDrawer:
-    def __init__(self, fig_size=(10, 6), style=None,
-                 title=None, label_name="Pareto front",
+    def __init__(self, fig_size=(10, 6), style=None, title=None,
                  show_plot=False, save_file_path=None, file_exts=(".png", ".pdf"), **kwargs):
         self.fig_size = fig_size
         self.style = style
         self.title = title
-        self.label_name = label_name
         self.show_plot = show_plot
         self.save_file_path = save_file_path
         self.file_exts = file_exts
         self.kwargs = kwargs
-        self.data = None
-        self.objectives = None
 
         if self.style:
             plt.style.use(self.style)
