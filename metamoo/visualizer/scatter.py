@@ -12,27 +12,28 @@ from metamoo.visualizer.base_drawer import BaseDrawer
 
 
 class ScatterPlot(BaseDrawer):
-    def __init__(self, fig_size=(10, 6), style=None, title=None, label_name='Pareto Front',
+    def __init__(self, fig_size=(10, 6), style=None, title=None,
                  show_plot=True, save_file_path=None, file_exts=(".png", ".pdf"),
-                 grid=True, view_angle=(30, 30)):
-        super().__init__(fig_size, style, title, label_name, show_plot, save_file_path, file_exts)
+                 grid=True, view_angle=(30, 30), legend_name="Pareto Front"):
+        super().__init__(fig_size, style, title, show_plot, save_file_path, file_exts)
         self.grid = grid
         self.view_angle = view_angle
+        self.legend_name = legend_name
 
     def plot(self, data: Union[List[Agent], np.ndarray], objectives=(1, 2), xyz_labels=None, **kwargs):
         # Format the data
         data = self.check_data(data)
         # Format the selected objectives
-        objectives = self.check_objectives(objectives, constraint_dim=True)
+        objectives = self.check_objectives(objectives, constraint_dim=True)     # [0, 1]
         # Format the xyz_labels
-        xyz_labels = self.check_xyz_labels(xyz_labels, objectives=objectives)
+        xyz_labels = self.check_xyz_labels(xyz_labels, objectives=list(np.array(objectives) + 1))   # [1, 2] for labels
 
         # Update the front
         front = data[:, objectives]
 
         fig = plt.figure(figsize=self.fig_size, clear=True)
         if len(objectives) == 2:
-            plt.scatter(front[:, 0], front[:, 1], label=self.label_name)
+            plt.scatter(front[:, 0], front[:, 1], label=self.legend_name, **kwargs)
             if self.title:
                 plt.title(self.title)
             if xyz_labels:
@@ -40,7 +41,7 @@ class ScatterPlot(BaseDrawer):
                 plt.ylabel(xyz_labels[1])
         elif len(objectives) == 3:
             ax = fig.add_subplot(111, projection='3d')
-            ax.scatter(front[:, 0], front[:, 1], front[:, 2], label=self.label_name)
+            ax.scatter(front[:, 0], front[:, 1], front[:, 2], label=self.legend_name, **kwargs)
             if self.title:
                 ax.set_title(self.title)
             if xyz_labels:
