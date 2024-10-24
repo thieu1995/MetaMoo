@@ -22,3 +22,4 @@ from metamoo.visualizer.radar import RadarPlot
 from metamoo.visualizer.histogram import HistogramPlot
 from metamoo.visualizer.tradeoff import TradeOffPlot
 from metamoo.visualizer.surface import SurfacePlot
+from metamoo.visualizer.coordinate import ParallelCoordinatePlot
