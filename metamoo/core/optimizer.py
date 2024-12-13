@@ -51,12 +51,11 @@ class Optimizer:
 
     def printer(self, epoch, fronts, time_epoch=None, diversity=None, print_best_front=True):
         if print_best_front:
-            bf = "\n\tBest front: " + "\n\t".join([agent.to_str() for agent in fronts[0]])
+            bf = "Best front: \n\t" + "\n\t".join([agent.to_str() for agent in fronts[0]])
         else:
             bf = ""
         print(f"Epoch: {epoch}, Best front size: {len(fronts[0])}, "
-              f"1st best non-dominated solution: {fronts[0][0].objectives}, "
-              f"Time: {time_epoch:.4f} seconds, Diversity: {diversity}. {bf}")
+              f"Time: {time_epoch:.4f} seconds, Diversity: {diversity}, {bf}")
 
     @staticmethod
     def non_dominated_sorting(agents: List[Agent]):
