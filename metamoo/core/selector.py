@@ -8,6 +8,7 @@ from typing import List
 from abc import ABC, abstractmethod
 import numpy as np
 from metamoo import Agent
+from metamoo.utils.distance import calculate_crowding_distance
 
 
 class Selector(ABC):
@@ -55,17 +56,23 @@ class NsgaSelector(Selector):
                 break
         return [agents[idx] for idx in pop_selected]
 
-#          if self.selection == "roulette":
-#             id_c1 = self.get_index_roulette_wheel_selection(list_fitness)
-#             id_c2 = self.get_index_roulette_wheel_selection(list_fitness)
-#             while id_c2 == id_c1:
-#                 id_c2 = self.get_index_roulette_wheel_selection(list_fitness)
-#         elif self.selection == "random":
-#             id_c1, id_c2 = self.generator.choice(range(self.pop_size), 2, replace=False)
-#         else:   ## tournament
-#             id_c1, id_c2 = self.get_index_kway_tournament_selection(self.pop, k_way=self.k_way, output=2)
-#         return self.pop[id_c1].solution, self.pop[id_c2].solution
 
+class Nsga2Selector(Selector):
+    def __init__(self, seed=None):
+        self.generator = np.random.default_rng(seed)
+
+    def do(self, agents:List[Agent], fronts=None, n_parents=None):
+        crow_dist = calculate_crowding_distance(agents)
+        pop_selected = []
+        for front in fronts:
+            if len(pop_selected) + len(front) <= n_parents:
+                pop_selected.extend(front)
+            else:
+                sorted_front = sorted(front, key=lambda idx: crow_dist[idx], reverse=True)
+                remaining_slots = n_parents - len(pop_selected)
+                pop_selected.extend(sorted_front[:remaining_slots])
+                break
+        return [agents[idx] for idx in pop_selected]
 
 
 
