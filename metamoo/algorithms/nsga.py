@@ -19,16 +19,10 @@ class NSGA(Optimizer):
 
     def evolve(self, epoch):
 
-        # Perform non-dominated sorting
-        fronts_idx, _ = self.non_dominated_sorting(self.pop.agents)
-
-        # Select parents for crossover
-        pop_next = self.selector.do(self.pop.agents, fronts_idx, self.pop_size)      # List of agents
-
         pop_new = []
         for idx in range(0, self.pop_size):
             # Perform crossover to generate offspring
-            parents = self.generator.choice(pop_next, 2, replace=False)
+            parents = self.generator.choice(self.pop.agents, 2, replace=False)
             agent = self.crossover.do(parents)
 
             # Perform mutation on offspring
@@ -39,5 +33,11 @@ class NSGA(Optimizer):
             agent = self.evaluate_agent(agent)
             pop_new.append(agent)
 
-        # Update population
-        self.pop = Population(pop_new)
+        # Create a pool of agents
+        pop_new.extend(self.pop.agents)
+
+        # Perform non-dominated sorting
+        fronts_idx, _ = self.non_dominated_sorting(pop_new)
+
+        # Select parents for next generation
+        self.pop = Population(self.selector.do(pop_new, fronts_idx, self.pop_size))
