@@ -11,11 +11,12 @@ from metamoo.core.problem import Problem
 from metamoo.core.prototype import Agent, Population
 from metamoo.core.space import (BaseVar, FloatVar, PermutationVar, StringVar, BinaryVar,
                                 IntegerVar, TransferBinaryVar, BoolVar,MixedSetVar, TransferBoolVar, LabelEncoder)
-from metamoo.core.selector import NsgaSelector, BinarySelector, TournamentSelector, Selector
+from metamoo.core.selector import NsgaSelector, BinarySelector, TournamentSelector, Selector, Nsga2Selector
 from metamoo.core.mutator import SwapMutator, InversionMutator, ScrambleMutator, UniformFlipMutator, GaussianFlipMutator, Mutator
 from metamoo.core.repairer import BoundRepair, CircularRepair, UniformRandomRepair, GaussianRandomRepair, Repairer
 from metamoo.core.crossover import UniformCrossover, ArithmeticCrossover, OnePointCrossover, MultiPointsCrossover, Crossover
 from metamoo.algorithms.nsga import NSGA
+from metamoo.algorithms.nsga2 import NSGA2
 from metamoo.visualizer.scatter import ScatterPlot
 from metamoo.visualizer.heatmap import HeatmapPlot
 from metamoo.visualizer.radar import RadarPlot
