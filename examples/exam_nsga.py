@@ -29,7 +29,7 @@ def run_nsga():
     SEED = 10
 
     # Initialize the NSGA-II algorithm
-    model = NSGA(epoch=50, pop_size=20,
+    model = NSGA(epoch=100, pop_size=50,
                  selector=NsgaSelector(seed=SEED),
                  crossover=ArithmeticCrossover(crossover_rate=0.8, seed=SEED),
                  mutator=SwapMutator(mutation_rate=0.1, seed=SEED),
@@ -39,17 +39,16 @@ def run_nsga():
     # Run the evolution process to optimize the objectives
     model.solve(problem)
 
-    # # Plot the resulting Pareto front
+    ## Plot the resulting Pareto front
+    plotter = ScatterPlot(fig_size=(10, 6), style=None, title="Pareto front - Scatter",
+                          show_plot=True, save_file_path=None, file_exts=(".png", ".pdf"),
+                          grid=True, view_angle=(30, 30), legend_name='Pareto Front')
+
     # Plot 2D for best pareto front found
-    scatter_2d = ScatterPlot(model.fronts_sorted[0], plot_type='2D', title='2D Scatter Plot',
-                             xlabel='Objective 1', ylabel='Objective 2', objectives=[1, 2])
-    scatter_2d.plot()
+    plotter.plot(model.fronts_sorted[0], objectives=[1, 2], xyz_labels=None, c="r", marker="o")
 
     # Plot 3D for best pareto front found
-    scatter_3d = ScatterPlot(model.fronts_sorted[0], plot_type='3D', title='3D Scatter Plot',
-                             xlabel='Objective 1', ylabel='Objective 2', zlabel='Objective 3',
-                             view_angle=(30, 45), objectives=[1, 2, 3])
-    scatter_3d.plot()
+    plotter.plot(model.fronts_sorted[0], objectives=[1, 2, 3], xyz_labels=["obj 1", "obj 2", "obj 3"])
 
 
 # Run the example
