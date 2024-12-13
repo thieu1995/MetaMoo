@@ -63,14 +63,12 @@ class UniformFlipMutator(Mutator):
 class GaussianFlipMutator(Mutator):
     def __init__(self, kind="single", mutation_rate=0.1, seed=None, loc=None, scale=None, **kwargs):
         super().__init__(kind, mutation_rate, seed, **kwargs)
-        self.loc = loc
-        self.scale = scale
+        self.loc = 0 if loc is None else loc
+        self.scale = 1 if scale is None else scale
 
     def do(self, agent: Agent) -> Agent:
-        if self.loc is None:
-            self.loc = np.zeros(len(agent.solution))
-        if self.scale is None:
-            self.scale = np.ones(len(agent.solution))
+        self.loc = self.loc * np.ones(len(agent.solution))
+        self.scale = self.scale * np.ones(len(agent.solution))
         if self.kind == "single":
             if self.generator.random() < self.mutation_rate:
                 idx = self.generator.integers(0, len(agent.solution))
