@@ -24,7 +24,7 @@ class Optimizer:
     def initialization(self):
         self.pop = self.problem.generate_population(self.pop_size)
         # Perform non-dominated sorting
-        self.fronts_indexes, self.fronts_sorted = self.non_dominated_sorting(self.pop.agents)
+        # self.fronts_indexes, self.fronts_sorted = self.non_dominated_sorting(self.pop.agents)
 
     def solve(self, problem):
         self.problem = problem
