@@ -5,13 +5,13 @@
 # --------------------------------------------------%
 
 from metamoo import Optimizer, Population
-from metamoo.utils.ref_point import generate_reference_points, associate_with_reference_points
+from metamoo.utils.ref_point import generate_reference_points
 from metamoo.core.selector import Nsga3Selector
 
 
 class Nsga3(Optimizer):
-    def __init__(self, epoch, pop_size, crossover=None, mutator=None,
-                 repairer=None, seed=None, n_divisions=5, *args, **kwargs):
+    def __init__(self, epoch, pop_size, crossover=None, mutator=None, n_divisions=10,
+                 seed=None, repairer=None, *args, **kwargs):
         super().__init__(seed, repairer, *args, **kwargs)
         self.epoch = epoch
         self.pop_size = pop_size

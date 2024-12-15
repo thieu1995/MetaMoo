@@ -10,7 +10,7 @@ from metamoo.core.selector import Nsga2Selector
 
 class Nsga2(Optimizer):
     def __init__(self, epoch, pop_size, crossover=None, mutator=None,
-                 repairer=None, seed=None, *args, **kwargs):
+                 seed=None, repairer=None, *args, **kwargs):
         super().__init__(seed, repairer, *args, **kwargs)
         self.epoch = epoch
         self.pop_size = pop_size

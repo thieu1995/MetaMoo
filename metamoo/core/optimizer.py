@@ -7,6 +7,7 @@
 from typing import List
 import time
 import numpy as np
+from metamoo.core.repairer import BoundRepair
 from metamoo.core.prototype import Agent
 from metamoo.utils.pareto import non_dominated_sorting as nds
 
@@ -23,12 +24,15 @@ class Optimizer:
 
     def initialization(self):
         self.pop = self.problem.generate_population(self.pop_size)
-        # Perform non-dominated sorting
-        # self.fronts_indexes, self.fronts_sorted = self.non_dominated_sorting(self.pop.agents)
+
+    def initialize_variables(self, problem):
+        if self.repairer is None:
+            self.repairer = BoundRepair(lb=problem.lb, ub=problem.ub)
 
     def solve(self, problem):
         self.problem = problem
         self.initialization()
+        self.initialize_variables(problem)
 
         for epoch in range(1, self.epoch+1):
             time_epoch = time.perf_counter()

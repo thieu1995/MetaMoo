@@ -10,7 +10,7 @@ from metamoo.core.selector import NsgaSelector
 
 class Nsga(Optimizer):
     def __init__(self, epoch, pop_size, crossover=None, mutator=None,
-                 repairer=None, seed=None, *args, **kwargs):
+                 seed=None, repairer=None,  *args, **kwargs):
         super().__init__(seed, repairer, *args, **kwargs)
         self.epoch = epoch
         self.pop_size = pop_size
@@ -19,7 +19,6 @@ class Nsga(Optimizer):
         self.selector = NsgaSelector(seed=seed)
 
     def evolve(self, epoch):
-
         pop_new = []
         for idx in range(0, self.pop_size):
             # Perform crossover to generate offspring
