@@ -28,7 +28,7 @@ def run_nsga():
     )
     SEED = 10
 
-    # Initialize the NSGA-II algorithm
+    # Initialize the NSGA algorithm
     model = NSGA(epoch=100, pop_size=50,
                  selector=NsgaSelector(seed=SEED),
                  crossover=ArithmeticCrossover(crossover_rate=0.8, seed=SEED),
