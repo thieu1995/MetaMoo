@@ -17,7 +17,7 @@ from metamoo.core.repairer import BoundRepair, CircularRepair, UniformRandomRepa
 from metamoo.core.crossover import UniformCrossover, ArithmeticCrossover, OnePointCrossover, MultiPointsCrossover, Crossover
 from metamoo.algorithms.nsga import Nsga
 from metamoo.algorithms.nsga2 import Nsga2
-from metamoo.algorithms.nsga3 import NSGA3
+from metamoo.algorithms.nsga3 import Nsga3
 from metamoo.visualizer.scatter import ScatterPlot
 from metamoo.visualizer.heatmap import HeatmapPlot
 from metamoo.visualizer.radar import RadarPlot
