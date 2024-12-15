@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from metamoo import Agent
 from metamoo.utils.distance import calculate_crowding_distance
+from metamoo.utils.ref_point import associate_with_reference_points
 
 
 class Selector(ABC):
@@ -80,63 +81,22 @@ class Nsga3Selector(Selector):
         self.generator = np.random.default_rng(seed)
 
     def do(self, agents:List[Agent], fronts=None, n_parents=None, ref_points=None):
-        crow_dist = calculate_crowding_distance(agents)
+        # Niching for Reference Point-based Selection
+        ref_point_counts = np.zeros(ref_points.shape[0])
         pop_selected = []
         for front in fronts:
             if len(pop_selected) + len(front) <= n_parents:
                 pop_selected.extend(front)
             else:
-                sorted_front = sorted(front, key=lambda idx: crow_dist[idx], reverse=True)
-                remaining_slots = n_parents - len(pop_selected)
-                pop_selected.extend(sorted_front[:remaining_slots])
+                pop_objs = np.array([agent.objectives for agent in agents])
+                pop_objs = pop_objs[front]
+                closest_points, _ = associate_with_reference_points(pop_objs, ref_points)
+                unique_refs = np.unique(closest_points)
+                while len(pop_selected) < n_parents:
+                    ref_with_min_count = unique_refs[np.argmin(ref_point_counts[unique_refs])]
+                    candidates = [i for i, ref in zip(front, closest_points) if ref == ref_with_min_count]
+                    selected = candidates[self.generator.choice(len(candidates))]
+                    pop_selected.append(selected)
+                    ref_point_counts[ref_with_min_count] += 1
                 break
         return [agents[idx] for idx in pop_selected]
-
-
-# # Base Layer for Selection, Crossover, and Mutation
-# class Layer:
-#     def __call__(self, *args, **kwargs):
-#         raise NotImplementedError("Each layer must implement the __call__ method.")
-
-# # Example Parent Selection Layer using tournament selection
-# class NsgaSelection(Layer):
-#     def __init__(self, n_agents=10):
-#         self.n_agents = n_agents
-#
-#     def __call__(self, pareto_fronts, population, objectives):
-#         selected_parents = []
-#         for _ in range(len(population)):
-#             # Perform tournament selection
-#             candidates = np.random.choice(len(population), size=self.tournament_size, replace=False)
-#             best_candidate = min(candidates, key=lambda x: objectives[x][0])
-#             selected_parents.append(population[best_candidate])
-#         return np.array(selected_parents)
-#
-#     # Chọn lọc cha mẹ từ các front dựa trên non-dominated sorting
-#     def selection(population, fronts, pop_size):
-#         selected_population = []
-#         for front in fronts:
-#             if len(selected_population) + len(front) <= pop_size:
-#                 selected_population.extend(front)
-#             else:
-#                 # Nếu thêm cả front sẽ vượt quá pop_size, chọn ngẫu nhiên từ front cuối cùng
-#                 remaining_slots = pop_size - len(selected_population)
-#                 selected_population.extend(np.random.choice(front, remaining_slots, replace=False))
-#                 break
-#         return selected_population
-#
-#
-#
-# # Example Parent Selection Layer using tournament selection
-# class TournamentSelection(Layer):
-#     def __init__(self, tournament_size=2):
-#         self.tournament_size = tournament_size
-#
-#     def __call__(self, pareto_fronts, population, objectives):
-#         selected_parents = []
-#         for _ in range(len(population)):
-#             # Perform tournament selection
-#             candidates = np.random.choice(len(population), size=self.tournament_size, replace=False)
-#             best_candidate = min(candidates, key=lambda x: objectives[x][0])
-#             selected_parents.append(population[best_candidate])
-#         return np.array(selected_parents)
