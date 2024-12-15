@@ -6,7 +6,7 @@
 
 import numpy as np
 from metamoo import Problem, FloatVar
-from metamoo import Nsga3, OnePointCrossover, GaussianFlipMutator, BoundRepair
+from metamoo import Nsga3, OnePointCrossover, GaussianFlipMutator
 from metamoo import ScatterPlot
 
 
@@ -20,7 +20,7 @@ def objective_function3(X):
     return np.sum(np.sin(X) + X**2 - 5*X)
 
 
-def run_nsga():
+def run_nsga3():
     # Create a multi-objective problem
     problem = Problem(
         objectives=[objective_function1, objective_function2, objective_function3],
@@ -33,7 +33,6 @@ def run_nsga():
                 crossover=OnePointCrossover(crossover_rate=0.9, seed=SEED),
                 mutator=GaussianFlipMutator(kind="single", mutation_rate=0.1, loc=0, scale=1, seed=SEED),
                 n_divisions=5,
-                repairer=BoundRepair(problem.lb, problem.ub),
                 seed=SEED)
 
     # Run the evolution process to optimize the objectives
@@ -53,4 +52,4 @@ def run_nsga():
 
 # Run the example
 if __name__ == "__main__":
-    run_nsga()
+    run_nsga3()
