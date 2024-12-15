@@ -8,11 +8,11 @@ from typing import List, Optional
 
 
 class Agent:
-    def __init__(self, solution):
-        self.solution = solution    # The solution (variables) representing the Agent
-        self.objectives = None          # Objective values after evaluation
-        self.violations = None          # Amount of violation for each constraint
-        self.feasible = None            # Feasibility status (True/False)
+    def __init__(self, solution=None, objectives=None, violations=None, feasible=None):
+        self.solution = solution        # The solution (variables) representing the Agent
+        self.objectives = objectives    # Objective values after evaluation
+        self.violations = violations    # Amount of violation for each constraint
+        self.feasible = feasible        # Feasibility status (True/False)
 
     def __repr__(self):
         return f"Agent(vars={self.solution}, objs={self.objectives}, " \
