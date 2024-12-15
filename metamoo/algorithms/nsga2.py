@@ -5,15 +5,16 @@
 # --------------------------------------------------%
 
 from metamoo import Optimizer, Population
+from metamoo.core.selector import Nsga2Selector
 
 
-class NSGA2(Optimizer):
-    def __init__(self, epoch, pop_size, selector=None, crossover=None, mutator=None,
+class Nsga2(Optimizer):
+    def __init__(self, epoch, pop_size, crossover=None, mutator=None,
                  repairer=None, seed=None, *args, **kwargs):
         super().__init__(seed, repairer, *args, **kwargs)
         self.epoch = epoch
         self.pop_size = pop_size
-        self.selector = selector
+        self.selector = Nsga2Selector(seed=seed)
         self.crossover = crossover
         self.mutator = mutator
 

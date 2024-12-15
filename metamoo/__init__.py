@@ -16,7 +16,7 @@ from metamoo.core.mutator import SwapMutator, InversionMutator, ScrambleMutator,
 from metamoo.core.repairer import BoundRepair, CircularRepair, UniformRandomRepair, GaussianRandomRepair, Repairer
 from metamoo.core.crossover import UniformCrossover, ArithmeticCrossover, OnePointCrossover, MultiPointsCrossover, Crossover
 from metamoo.algorithms.nsga import Nsga
-from metamoo.algorithms.nsga2 import NSGA2
+from metamoo.algorithms.nsga2 import Nsga2
 from metamoo.algorithms.nsga3 import NSGA3
 from metamoo.visualizer.scatter import ScatterPlot
 from metamoo.visualizer.heatmap import HeatmapPlot

@@ -75,6 +75,22 @@ class Nsga2Selector(Selector):
         return [agents[idx] for idx in pop_selected]
 
 
+class Nsga3Selector(Selector):
+    def __init__(self, seed=None):
+        self.generator = np.random.default_rng(seed)
+
+    def do(self, agents:List[Agent], fronts=None, n_parents=None, ref_points=None):
+        crow_dist = calculate_crowding_distance(agents)
+        pop_selected = []
+        for front in fronts:
+            if len(pop_selected) + len(front) <= n_parents:
+                pop_selected.extend(front)
+            else:
+                sorted_front = sorted(front, key=lambda idx: crow_dist[idx], reverse=True)
+                remaining_slots = n_parents - len(pop_selected)
+                pop_selected.extend(sorted_front[:remaining_slots])
+                break
+        return [agents[idx] for idx in pop_selected]
 
 
 # # Base Layer for Selection, Crossover, and Mutation
