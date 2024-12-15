@@ -6,7 +6,7 @@
 
 import numpy as np
 from metamoo import Problem, FloatVar
-from metamoo import NSGA, NsgaSelector, ArithmeticCrossover, SwapMutator, BoundRepair
+from metamoo import Nsga, ArithmeticCrossover, SwapMutator, BoundRepair
 from metamoo import ScatterPlot
 
 
@@ -29,8 +29,7 @@ def run_nsga():
     SEED = 10
 
     # Initialize the NSGA algorithm
-    model = NSGA(epoch=100, pop_size=50,
-                 selector=NsgaSelector(seed=SEED),
+    model = Nsga(epoch=100, pop_size=50,
                  crossover=ArithmeticCrossover(crossover_rate=0.8, seed=SEED),
                  mutator=SwapMutator(mutation_rate=0.1, seed=SEED),
                  repairer=BoundRepair(problem.lb, problem.ub),
