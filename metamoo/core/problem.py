@@ -20,7 +20,7 @@ class Problem:
         self._bounds, self.lb, self.ub = None, None, None
         self.seed = None
         self.name = "P"
-        self.n_objs = 2
+        self.n_objs = len(objectives)
         self.n_dims, self.save_population = None, False
         self.__set_keyword_arguments(kwargs)
         self.set_bounds(bounds)
