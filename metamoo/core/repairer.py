@@ -6,7 +6,7 @@
 
 from abc import ABC, abstractmethod
 import numpy as np
-from metamoo import Agent
+from metamoo.core.prototype import Agent
 
 
 class Repairer(ABC):
