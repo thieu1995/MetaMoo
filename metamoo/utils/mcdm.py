@@ -325,3 +325,58 @@ def gra(pop_objs, weights=None, is_benefit_objective=None):
 
     return (best_solution_idx, best_solution), (gray_relational_grades, ranking)
 
+
+def goal_programming(pop_objs, weights=None, goals=None):
+    """
+    Goal Programming implementation to minimize deviations from predefined goals.
+    :param F: Decision matrix (Pareto front solutions).
+    :param goals: Target goals for each objective.
+    :param weights: Weights for each objective's deviations.
+    :return: Best solution and deviations.
+    """
+    from scipy.optimize import linprog
+
+    n_solutions, n_objectives = pop_objs.shape
+
+    # Objective function: Minimize weighted sum of deviations (d+ and d-)
+    c = []
+    A_eq = []
+    b_eq = []
+    bounds = []
+
+    # Add deviation variables for each objective (positive and negative)
+    for idx in range(n_objectives):
+        c.extend([weights[idx], weights[idx]])  # Weights for d- and d+
+        bounds.extend([(0, None), (0, None)])  # Deviations are non-negative
+
+    # Add equality constraints for each objective
+    for idx in range(n_objectives):
+        constraint = np.zeros(n_objectives * 2)
+        constraint[2 * idx] = 1         # d-
+        constraint[2 * idx + 1] = -1    # d+
+        A_eq.append(constraint)
+        b_eq.append(goals[idx])
+
+    # Add decision variables (actual solutions) and their deviations
+    A_eq = np.array(A_eq)
+    b_eq = np.array(b_eq)
+
+    # Solve linear programming for each solution in Pareto front
+    best_solution = None
+    best_index = None
+    min_deviation = float("inf")
+
+    for idx, solution in enumerate(pop_objs):
+        # Modify RHS to include the actual objective values
+        b_eq_modified = b_eq - solution
+        res = linprog(c, A_eq=A_eq, b_eq=b_eq_modified, bounds=bounds, method='highs')
+
+        if res.success:
+            total_deviation = res.fun
+            if total_deviation < min_deviation:
+                min_deviation = total_deviation
+                best_solution = solution
+                best_index = idx
+
+    return (best_index, best_solution), (min_deviation, )
+

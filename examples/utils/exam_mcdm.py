@@ -5,7 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
-from metamoo.utils.mcdm import topsis, ahp, promethee, electre, vikor, moora, gra
+from metamoo.utils.mcdm import topsis, ahp, promethee, electre, vikor, moora, gra, goal_programming
 
 pop_objs = np.array([
                     [1, 2, 3],
@@ -51,7 +51,7 @@ print(f"The core list: {score}")
 # ---- PROMETHEE ----
 # f1 (cost), f2 (time) and f3 (accuracy)
 is_benefit_objective = [False, False, True]  # f1, f2 are minimization, f3 is maximization
-weights = [0.2, 0.3, 0.5]  # Equal importance for both objectives
+weights = [0.2, 0.3, 0.5]  # Weights present importance for objectives
 
 # Find the best solution by PROMETHEE
 (best_idx, best_sol), (netflow, ) = promethee(pop_objs, weights, is_benefit_objective)
@@ -64,7 +64,7 @@ print(f"The netflow list: {netflow}")
 # ---- ELECTRE ----
 # f1 (cost), f2 (time) and f3 (accuracy)
 is_benefit_objective = [False, False, True]  # f1, f2 are minimization, f3 is maximization
-weights = [0.2, 0.3, 0.5]  # Equal importance for both objectives
+weights = [0.2, 0.3, 0.5]  # Weights present importance for objectives
 
 # Find the best solution by PROMETHEE
 (best_idx, best_sol), (net_outflow, ) = electre(pop_objs, weights, is_benefit_objective)
@@ -77,7 +77,7 @@ print(f"The net outflow list: {net_outflow}")
 # ---- VIKOR ----
 # f1 (cost), f2 (time) and f3 (accuracy)
 is_benefit_objective = [False, False, True]  # f1, f2 are minimization, f3 is maximization
-weights = [0.2, 0.3, 0.5]  # Equal importance for both objectives
+weights = [0.2, 0.3, 0.5]  # Weights present importance for objectives
 
 # Run VIKOR method
 (best_idx, best_sol), (Q, rank_Q, rank_S, rank_R) = vikor(pop_objs, weights, is_benefit_objective, v=0.5)
@@ -94,7 +94,7 @@ print(rank_Q)
 # ---- MOORA ----
 # f1 (cost), f2 (time) and f3 (accuracy)
 is_benefit_objective = [False, False, True]  # f1, f2 are minimization, f3 is maximization
-weights = [0.2, 0.3, 0.5]  # Equal importance for both objectives
+weights = [0.2, 0.3, 0.5]  # Weights present importance for objectives
 
 # Run MOORA method
 (best_idx, best_sol), (score, ranking) = moora(pop_objs, weights, is_benefit_objective)
@@ -109,7 +109,7 @@ print(f"The ranking list: {ranking}")
 # ---- GRA ----
 # f1 (cost), f2 (time) and f3 (accuracy)
 is_benefit_objective = [False, False, True]  # f1, f2 are minimization, f3 is maximization
-weights = [0.2, 0.3, 0.5]  # Equal importance for both objectives
+weights = [0.2, 0.3, 0.5]  # Weights present importance for objectives
 
 # Run GRA method
 (best_idx, best_sol), (score, ranking) = gra(pop_objs, weights, is_benefit_objective)
@@ -119,4 +119,18 @@ print(f"\nBest Solution Selected by GRA (f1, f2, f3):")
 print(f"Best idx: {best_idx}, Best sol: {best_sol}")
 print(f"The score list: {score}")
 print(f"The ranking list: {ranking}")
+
+
+# ---- Goal Programming ----
+# f1 (cost), f2 (time) and f3 (accuracy)
+goals = [1.5, 4.0, 4.5]  # f1, f2 are minimization, f3 is maximization
+weights = [1, 1, 1]  # Equal weights for deviations
+
+# Run Goal Programming
+(best_idx, best_sol), (min_deviation, )  = goal_programming(pop_objs, weights, goals)
+
+# ---- Print Results ----
+print(f"\nBest Solution Selected by Goal Programming (f1, f2, f3):")
+print(f"Best idx: {best_idx}, Best sol: {best_sol}")
+print(f"The total deviation from goals: {min_deviation}")
 
