@@ -78,7 +78,7 @@ def topsis(pop_objs, weights=None, is_benefit_objective=None):
     best_solution_idx = np.argmax(topsis_score)
     best_solution = pop_objs[best_solution_idx]
 
-    return topsis_score, best_solution, best_solution_idx
+    return (best_solution_idx, best_solution), (topsis_score, )
 
 
 def ahp(pop_objs, pairwise_matrix=None, is_benefit_objective=None):
@@ -108,7 +108,7 @@ def ahp(pop_objs, pairwise_matrix=None, is_benefit_objective=None):
     best_solution_idx = np.argmax(scores)
     best_solution = pop_objs[best_solution_idx]
 
-    return scores, best_solution, best_solution_idx
+    return (best_solution_idx, best_solution), (scores, )
 
 
 def promethee(pop_objs, weights=None, is_benefit_objective=None):
@@ -167,7 +167,7 @@ def promethee(pop_objs, weights=None, is_benefit_objective=None):
     best_solution_idx = np.argmax(net_flow)
     best_solution = pop_objs[best_solution_idx]
 
-    return net_flow, best_solution, best_solution_idx
+    return (best_solution_idx, best_solution), (net_flow, )
 
 
 def electre(pop_objs, weights=None, is_benefit_objective=None, concordance_threshold=0.6, discordance_threshold=0.4):
@@ -203,4 +203,50 @@ def electre(pop_objs, weights=None, is_benefit_objective=None, concordance_thres
     best_solution_idx = np.argmax(net_outflow)
     best_solution = pop_objs[best_solution_idx]
 
-    return net_outflow, best_solution, best_solution_idx
+    return (best_solution_idx, best_solution), (net_outflow, )
+
+
+def vikor(pop_objs, weights=None, is_benefit_objective=None, v=0.5):
+    """
+    VIKOR method implementation.
+    :param matrix: Decision matrix (alternatives x objectives).
+    :param weights: List of weights for each objective.
+    :param is_benefit_objective: List indicating which objectives are benefit (True) or cost (False).
+    :param v: VIKOR balancing parameter (0 ≤ v ≤ 1).
+    :return: Best alternative index and rankings.
+    """
+    n_alternatives, n_criteria = pop_objs.shape
+
+    # Step 1: Adjust objectives based on benefit/cost types
+    adjusted_matrix = pop_objs.copy()
+    for idx in range(n_criteria):
+        if is_benefit_objective[idx]:
+            adjusted_matrix[:, idx] = -pop_objs[:, idx]  # Convert maximize to minimize
+
+    # Step 2: Identify best and worst values for each criterion
+    f_best = np.min(adjusted_matrix, axis=0)
+    f_worst = np.max(adjusted_matrix, axis=0)
+
+    # Step 3: Calculate S_i (Utility) and R_i (Regret) for each alternative
+    S = np.zeros(n_alternatives)
+    R = np.zeros(n_alternatives)
+
+    for idx in range(n_alternatives):
+        S[idx] = np.sum(weights * (adjusted_matrix[idx] - f_best) / (f_worst - f_best))
+        R[idx] = np.max(weights * (adjusted_matrix[idx] - f_best) / (f_worst - f_best))
+
+    # Step 4: Calculate Q_i (VIKOR index)
+    S_best, S_worst = np.min(S), np.max(S)
+    R_best, R_worst = np.min(R), np.max(R)
+
+    Q = v * (S - S_best) / (S_worst - S_best) + (1 - v) * (R - R_best) / (R_worst - R_best)
+
+    # Step 5: Rank alternatives based on Q, S, and R
+    rank_Q = np.argsort(Q)
+    rank_S = np.argsort(S)
+    rank_R = np.argsort(R)
+
+    best_solution_idx = rank_Q[0]
+    best_solution = pop_objs[best_solution_idx]
+
+    return (best_solution_idx, best_solution), (Q, rank_Q, rank_S, rank_R)

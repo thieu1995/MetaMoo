@@ -5,7 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
-from metamoo.utils.mcdm import topsis, ahp, promethee, electre
+from metamoo.utils.mcdm import topsis, ahp, promethee, electre, vikor
 
 pop_objs = np.array([
                     [1, 2, 3],
@@ -23,7 +23,7 @@ weights = np.array([0.3, 0.2, 0.5])
 is_benefit_objective = [False, False, True]  # f1, f2 are minimization, f3 is maximization
 
 # Find the best solution by TOPSIS
-score, best_sol, best_idx = topsis(pop_objs, weights=weights, is_benefit_objective=is_benefit_objective)
+(best_idx, best_sol), (score, )  = topsis(pop_objs, weights=weights, is_benefit_objective=is_benefit_objective)
 
 print(f"\nBest Solution Selected by TOPSIS (f1, f2, f3):")
 print(f"Best idx: {best_idx}, Best sol: {best_sol}")
@@ -41,7 +41,7 @@ pairwise_matrix = np.array([
 is_benefit_objective = [False, False, True]  # f1, f2 are minimization, f3 is maximization
 
 # Find the best solution by AHP
-score, best_sol, best_idx = ahp(pop_objs, pairwise_matrix=pairwise_matrix, is_benefit_objective=is_benefit_objective)
+(best_idx, best_sol), (score, ) = ahp(pop_objs, pairwise_matrix=pairwise_matrix, is_benefit_objective=is_benefit_objective)
 
 print(f"\nBest Solution Selected by AHP (f1, f2, f3):")
 print(f"Best idx: {best_idx}, Best sol: {best_sol}")
@@ -54,7 +54,7 @@ is_benefit_objective = [False, False, True]  # f1, f2 are minimization, f3 is ma
 weights = [0.2, 0.3, 0.5]  # Equal importance for both objectives
 
 # Find the best solution by PROMETHEE
-netflow, best_sol, best_idx = promethee(pop_objs, weights, is_benefit_objective)
+(best_idx, best_sol), (netflow, ) = promethee(pop_objs, weights, is_benefit_objective)
 
 print(f"\nBest Solution Selected by PROMETHEE (f1, f2, f3):")
 print(f"Best idx: {best_idx}, Best sol: {best_sol}")
@@ -67,10 +67,28 @@ is_benefit_objective = [False, False, True]  # f1, f2 are minimization, f3 is ma
 weights = [0.2, 0.3, 0.5]  # Equal importance for both objectives
 
 # Find the best solution by PROMETHEE
-net_outflow, best_sol, best_idx = electre(pop_objs, weights, is_benefit_objective)
+(best_idx, best_sol), (net_outflow, ) = electre(pop_objs, weights, is_benefit_objective)
 
 print(f"\nBest Solution Selected by ELECTRE (f1, f2, f3):")
 print(f"Best idx: {best_idx}, Best sol: {best_sol}")
-print(f"The net outflow list: {netflow}")
+print(f"The net outflow list: {net_outflow}")
+
+
+# ---- VIKOR ----
+# f1 (cost), f2 (time) and f3 (accuracy)
+is_benefit_objective = [False, False, True]  # f1, f2 are minimization, f3 is maximization
+weights = [0.2, 0.3, 0.5]  # Equal importance for both objectives
+
+# Run VIKOR method
+(best_idx, best_sol), (Q, rank_Q, rank_S, rank_R) = vikor(pop_objs, weights, is_benefit_objective, v=0.5)
+
+# ---- Print Results ----
+print(f"\nBest Solution Selected by VIKOR (f1, f2, f3):")
+print(f"Best idx: {best_idx}, Best sol: {best_sol}")
+print(f"The vikor Q index list: {Q}")
+
+print("\nRanking of Solutions Based on VIKOR (Q):")
+print(rank_Q)
+
 
 
