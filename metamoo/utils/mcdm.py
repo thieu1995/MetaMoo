@@ -250,3 +250,38 @@ def vikor(pop_objs, weights=None, is_benefit_objective=None, v=0.5):
     best_solution = pop_objs[best_solution_idx]
 
     return (best_solution_idx, best_solution), (Q, rank_Q, rank_S, rank_R)
+
+
+def moora(pop_objs, weights=None, is_benefit_objective=None):
+    """
+    MOORA method implementation.
+    :param matrix: Decision matrix (alternatives x objectives).
+    :param weights: List of weights for each objective.
+    :param is_benefit_objective: List indicating which objectives are benefit (True) or cost (False).
+    :return: MOORA scores and ranked alternatives.
+    """
+    n_alternatives, n_criteria = pop_objs.shape
+
+    # Step 1: Normalize the decision matrix
+    normalized_matrix = get_normalize_by_norm(pop_objs)
+
+    # Step 2: Apply weights to the normalized matrix
+    weighted_matrix = normalized_matrix * weights
+
+    # Step 3: Calculate MOORA ratios
+    scores = np.zeros(n_alternatives)
+    for idx in range(n_criteria):
+        if is_benefit_objective[idx]:
+            scores += weighted_matrix[:, idx]  # Benefit criteria (maximize)
+        else:
+            scores -= weighted_matrix[:, idx]  # Cost criteria (minimize)
+
+    # Step 4: Rank alternatives based on scores
+    ranking = np.argsort(-scores)  # Sort in descending order of scores
+
+    best_solution_idx = ranking[0]
+    best_solution = pop_objs[best_solution_idx]
+
+    return (best_solution_idx, best_solution), (scores, ranking)
+
+
