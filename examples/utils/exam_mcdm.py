@@ -5,7 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
-from metamoo.utils.mcdm import topsis, ahp, promethee, electre, vikor, moora, gra, goal_programming
+from metamoo.utils.mcdm import weighted_sum, topsis, ahp, promethee, electre, vikor, moora, gra, goal_programming
 
 pop_objs = np.array([
                     [1, 2, 3],
@@ -16,6 +16,20 @@ pop_objs = np.array([
                     [2, 3, 4],
                     [4, 3, 5],
                     [1.5, 2.4, 3.4]])
+
+
+# ---- Weighted Sum Model ----
+# User needs to set up the weights (e.g, cost, time, accuracy)
+weights = np.array([0.3, 0.2, 0.5])
+is_benefit_objective = [False, False, True]  # f1, f2 are minimization, f3 is maximization
+
+# Find the best solution by WSM
+(best_idx, best_sol), (score, ) = weighted_sum(pop_objs, weights=weights, is_benefit_objective=is_benefit_objective)
+
+print(f"\nBest Solution Selected by TOPSIS (f1, f2, f3):")
+print(f"Best idx: {best_idx}, Best sol: {best_sol}")
+print(f"The core list: {score}")
+
 
 # ---- TOPSIS ----
 # User needs to set up the weights (e.g, cost, time, accuracy)
@@ -133,4 +147,3 @@ weights = [1, 1, 1]  # Equal weights for deviations
 print(f"\nBest Solution Selected by Goal Programming (f1, f2, f3):")
 print(f"Best idx: {best_idx}, Best sol: {best_sol}")
 print(f"The total deviation from goals: {min_deviation}")
-

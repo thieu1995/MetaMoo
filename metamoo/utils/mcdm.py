@@ -46,6 +46,37 @@ def get_discordance_matrix(matrix):
     return D
 
 
+def weighted_sum(pop_objs, weights=None, is_benefit_objective=None):
+    """
+    Weighted Sum Model (WSM) for multi-objective optimization.
+    :param F: Pareto front solutions (n_solutions x n_objectives).
+    :param weights: Weights for each objective.
+    :param is_benefit_objective: List indicating if the objective is benefit-type (True) or cost-type (False).
+    :return: Best solution and its aggregated score.
+    """
+    F_normalized = np.zeros_like(pop_objs)
+    n_objectives = pop_objs.shape[1]
+
+    # Normalize objectives (min-max normalization)
+    for idx in range(n_objectives):
+        f_min = pop_objs[:, idx].min()
+        f_max = pop_objs[:, idx].max()
+
+        if is_benefit_objective[idx]:  # Benefit-type objective
+            F_normalized[:, idx] = (pop_objs[:, idx] - f_min) / (f_max - f_min)
+        else:  # Cost-type objective
+            F_normalized[:, idx] = (f_max - pop_objs[:, idx]) / (f_max - f_min)
+
+    # Weighted sum calculation
+    aggregated_scores = np.dot(F_normalized, weights)
+
+    # Select the best solution (smallest aggregated score)
+    best_solution_idx = np.argmin(aggregated_scores)
+    best_solution = pop_objs[best_solution_idx]
+
+    return (best_solution_idx, best_solution), (aggregated_scores, )
+
+
 def topsis(pop_objs, weights=None, is_benefit_objective=None):
     """
     Topsis method
