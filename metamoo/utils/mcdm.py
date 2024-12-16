@@ -285,3 +285,43 @@ def moora(pop_objs, weights=None, is_benefit_objective=None):
     return (best_solution_idx, best_solution), (scores, ranking)
 
 
+def gra(pop_objs, weights=None, is_benefit_objective=None):
+    """
+    Gray Relational Analysis (GRA) method implementation.
+    :param matrix: Decision matrix (alternatives x objectives).
+    :param weights: List of weights for each objective.
+    :param is_benefit_objective: List indicating which objectives are benefit (True) or cost (False).
+    :return: Gray relational grades and ranked alternatives.
+    """
+    n_alternatives, n_criteria = pop_objs.shape
+
+    # Step 1: Normalize the decision matrix
+    normalized_matrix = np.zeros_like(pop_objs)
+    for j in range(n_criteria):
+        if is_benefit_objective[j]:
+            normalized_matrix[:, j] = (pop_objs[:, j] - np.min(pop_objs[:, j])) / (np.max(pop_objs[:, j]) - np.min(pop_objs[:, j]))
+        else:
+            normalized_matrix[:, j] = (np.max(pop_objs[:, j]) - pop_objs[:, j]) / (np.max(pop_objs[:, j]) - np.min(pop_objs[:, j]))
+
+    # Step 2: Determine the ideal solution (all 1s after normalization)
+    ideal_solution = np.ones(n_criteria)
+
+    # Step 3: Calculate Gray Relational Coefficients
+    epsilon = 1e-6  # Small constant to avoid division by zero
+    diff_matrix = np.abs(normalized_matrix - ideal_solution)
+    min_diff = np.min(diff_matrix)
+    max_diff = np.max(diff_matrix)
+
+    gray_relational_coefficients = (min_diff + epsilon) / (diff_matrix + max_diff + epsilon)
+
+    # Step 4: Calculate Gray Relational Grades
+    gray_relational_grades = np.sum(gray_relational_coefficients * weights, axis=1)
+
+    # Step 5: Rank alternatives
+    ranking = np.argsort(-gray_relational_grades)  # Sort in descending order of grades
+
+    best_solution_idx = ranking[0]
+    best_solution = pop_objs[best_solution_idx]
+
+    return (best_solution_idx, best_solution), (gray_relational_grades, ranking)
+

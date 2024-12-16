@@ -5,7 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
-from metamoo.utils.mcdm import topsis, ahp, promethee, electre, vikor, moora
+from metamoo.utils.mcdm import topsis, ahp, promethee, electre, vikor, moora, gra
 
 pop_objs = np.array([
                     [1, 2, 3],
@@ -101,6 +101,21 @@ weights = [0.2, 0.3, 0.5]  # Equal importance for both objectives
 
 # ---- Print Results ----
 print(f"\nBest Solution Selected by MOORA (f1, f2, f3):")
+print(f"Best idx: {best_idx}, Best sol: {best_sol}")
+print(f"The score list: {score}")
+print(f"The ranking list: {ranking}")
+
+
+# ---- GRA ----
+# f1 (cost), f2 (time) and f3 (accuracy)
+is_benefit_objective = [False, False, True]  # f1, f2 are minimization, f3 is maximization
+weights = [0.2, 0.3, 0.5]  # Equal importance for both objectives
+
+# Run GRA method
+(best_idx, best_sol), (score, ranking) = gra(pop_objs, weights, is_benefit_objective)
+
+# ---- Print Results ----
+print(f"\nBest Solution Selected by GRA (f1, f2, f3):")
 print(f"Best idx: {best_idx}, Best sol: {best_sol}")
 print(f"The score list: {score}")
 print(f"The ranking list: {ranking}")
