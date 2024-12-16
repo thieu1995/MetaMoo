@@ -169,3 +169,38 @@ def promethee(pop_objs, weights=None, is_benefit_objective=None):
 
     return net_flow, best_solution, best_solution_idx
 
+
+def electre(pop_objs, weights=None, is_benefit_objective=None, concordance_threshold=0.6, discordance_threshold=0.4):
+    """
+    ELECTRE method implementation.
+    """
+    # Step 0: Adjust objectives for benefit/cost types
+    adjusted_matrix = pop_objs.copy()
+    for idx in range(pop_objs.shape[1]):
+        if is_benefit_objective[idx]:
+            adjusted_matrix[:, idx] = -pop_objs[:, idx]  # Negate to convert maximize to minimize
+
+    # Step 1: Normalize and weight the matrix
+    norm_matrix = get_normalize_by_norm(adjusted_matrix)
+    weighted_mat = norm_matrix * weights
+
+    # Step 2: Calculate concordance and discordance matrices
+    C = get_concordance_matrix(weighted_mat)
+    D = get_discordance_matrix(norm_matrix)
+
+    # Step 3: Apply thresholds
+    n_alternatives = adjusted_matrix.shape[0]
+    S = np.zeros((n_alternatives, n_alternatives))
+    for idx in range(n_alternatives):
+        for jdx in range(n_alternatives):
+            if idx != jdx and C[idx, jdx] >= concordance_threshold and D[idx, jdx] <= discordance_threshold:
+                S[idx, jdx] = 1  # Alternative i dominates j
+
+    # Step 4: Rank solutions
+    net_outflow = np.sum(S, axis=1)  # Count of alternatives dominated by each solution
+
+    # Step 5: Rank Solutions to fine the best
+    best_solution_idx = np.argmax(net_outflow)
+    best_solution = pop_objs[best_solution_idx]
+
+    return net_outflow, best_solution, best_solution_idx
