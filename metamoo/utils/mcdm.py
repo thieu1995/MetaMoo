@@ -20,6 +20,32 @@ def get_normalize_by_minmax(pop_objs):
     return (pop_objs - min_values) / (max_values - min_values)
 
 
+def get_concordance_matrix(matrix):
+    """
+    Compute the concordance matrix.
+    """
+    n_alternatives = matrix.shape[0]
+    C = np.zeros((n_alternatives, n_alternatives))
+    for idx in range(n_alternatives):
+        for jdx in range(n_alternatives):
+            if idx != jdx:
+                C[idx, jdx] = np.sum(matrix[idx] >= matrix[jdx])
+    return C
+
+
+def get_discordance_matrix(matrix):
+    """
+    Compute the discordance matrix.
+    """
+    n_alternatives = matrix.shape[0]
+    D = np.zeros((n_alternatives, n_alternatives))
+    for idx in range(n_alternatives):
+        for jdx in range(n_alternatives):
+            if idx != jdx:
+                D[idx, jdx] = np.max((matrix[jdx] - matrix[idx]) / (matrix.max(axis=0) - matrix.min(axis=0)))
+    return D
+
+
 def topsis(pop_objs, weights=None, is_benefit_objective=None):
     """
     Topsis method
@@ -83,4 +109,63 @@ def ahp(pop_objs, pairwise_matrix=None, is_benefit_objective=None):
     best_solution = pop_objs[best_solution_idx]
 
     return scores, best_solution, best_solution_idx
+
+
+def promethee(pop_objs, weights=None, is_benefit_objective=None):
+    """
+    Full PROMETHEE implementation: positive, negative, and net flow.
+    """
+
+    def preference_function(a, b, criterion_type="minimize"):
+        """
+        Define the preference function for pairwise comparison.
+        """
+        diff = b - a if criterion_type == "minimize" else a - b
+        return max(0, diff)
+
+    def calculate_preference_matrix(matrix, is_benefit_objective):
+        """
+        Calculate the preference matrix for all alternatives and objectives.
+        """
+        n_alternatives, n_objectives = matrix.shape
+        preference_matrices = []
+        # Loop through each objective
+        for j in range(n_objectives):
+            pref_matrix = np.zeros((n_alternatives, n_alternatives))
+            for i in range(n_alternatives):
+                for k in range(n_alternatives):
+                    pref_matrix[i, k] = preference_function(
+                        matrix[i, j], matrix[k, j],
+                        criterion_type="maximize" if is_benefit_objective[j] else "minimize"
+                    )
+            preference_matrices.append(pref_matrix)
+        return preference_matrices
+
+    # Step 0: Adjust objectives for benefit/cost types
+    adjusted_matrix = pop_objs.copy()
+    for idx in range(pop_objs.shape[1]):
+        if is_benefit_objective[idx]:
+            adjusted_matrix[:, idx] = -pop_objs[:, idx]  # Negate to convert maximize to minimize
+
+    # Step 1: Calculate preference matrices
+    preference_matrices = calculate_preference_matrix(adjusted_matrix, is_benefit_objective)
+    n_alternatives = adjusted_matrix.shape[0]
+
+    # Step 2: Aggregate preference indices
+    aggregated_pref = np.zeros((n_alternatives, n_alternatives))
+    for jdx in range(len(weights)):
+        aggregated_pref += weights[jdx] * preference_matrices[jdx]
+
+    # Step 3: Compute positive and negative flows
+    positive_flow = np.sum(aggregated_pref, axis=1) / (n_alternatives - 1)
+    negative_flow = np.sum(aggregated_pref, axis=0) / (n_alternatives - 1)
+
+    # Step 4: Calculate netflow
+    net_flow = positive_flow - negative_flow
+
+    # Step 5: Rank Solutions to fine the best
+    best_solution_idx = np.argmax(net_flow)
+    best_solution = pop_objs[best_solution_idx]
+
+    return net_flow, best_solution, best_solution_idx
 

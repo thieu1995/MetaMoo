@@ -5,7 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
-from metamoo.utils.mcdm import topsis, ahp
+from metamoo.utils.mcdm import topsis, ahp, promethee
 
 pop_objs = np.array([
                     [1, 2, 3],
@@ -46,5 +46,19 @@ score, best_sol, best_idx = ahp(pop_objs, pairwise_matrix=pairwise_matrix, is_be
 print(f"\nBest Solution Selected by AHP (f1, f2, f3):")
 print(f"Best idx: {best_idx}, Best sol: {best_sol}")
 print(f"The core list: {score}")
+
+
+# ---- PROMETHEE ----
+# f1 (cost), f2 (time) and f3 (accuracy)
+is_benefit_objective = [False, False, True]  # f1, f2 are minimization, f3 is maximization
+weights = [0.2, 0.3, 0.5]  # Equal importance for both objectives
+
+# Find the best solution by PROMETHEE
+netflow, best_sol, best_idx = promethee(pop_objs, weights, is_benefit_objective)
+
+print(f"\nBest Solution Selected by AHP (f1, f2, f3):")
+print(f"Best idx: {best_idx}, Best sol: {best_sol}")
+print(f"The netflow list: {netflow}")
+
 
 
