@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 import numpy as np
+from metamoo.core.prototype import Agent
 
 
 def calculate_crowding_distance(list_agents=None):
@@ -17,7 +18,13 @@ def calculate_crowding_distance(list_agents=None):
     Returns:
        crowding_distance: Numpy array containing the crowding distance for each individual.
     """
-    pop_objs = np.array([agent.objectives for agent in list_agents])
+    if type(list_agents) is list:
+        if type(list_agents[0]) is Agent:
+            pop_objs = np.array([agent.objectives for agent in list_agents])
+        else:
+            pop_objs = np.array(list_agents)
+    else:
+        raise ValueError('list_agents must be a list')
     n_agents, n_objs = pop_objs.shape       # (n_agents, n_objs)
     dist = np.zeros(n_agents)
 
