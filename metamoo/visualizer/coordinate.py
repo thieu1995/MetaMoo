@@ -8,7 +8,7 @@ from typing import Union, List
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from metamoo import Agent
+from metamoo.core.prototype import Agent
 from metamoo.visualizer.base_drawer import BaseDrawer
 
 

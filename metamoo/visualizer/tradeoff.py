@@ -7,7 +7,7 @@
 from typing import Union, List
 import matplotlib.pyplot as plt
 import numpy as np
-from metamoo import Agent
+from metamoo.core.prototype import Agent
 from metamoo.visualizer.base_drawer import BaseDrawer
 
 

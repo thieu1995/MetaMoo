@@ -4,8 +4,15 @@
 #       Github: https://github.com/thieu1995        %                         
 # --------------------------------------------------%
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 
+from metamoo.visualizer.scatter import ScatterPlot
+from metamoo.visualizer.heatmap import HeatmapPlot
+from metamoo.visualizer.radar import RadarPlot
+from metamoo.visualizer.histogram import HistogramPlot
+from metamoo.visualizer.tradeoff import TradeOffPlot
+from metamoo.visualizer.surface import SurfacePlot
+from metamoo.visualizer.coordinate import ParallelCoordinatePlot
 from metamoo.core.optimizer import Optimizer
 from metamoo.core.problem import Problem
 from metamoo.core.prototype import Agent, Population
@@ -18,10 +25,4 @@ from metamoo.core.crossover import UniformCrossover, ArithmeticCrossover, OnePoi
 from metamoo.algorithms.nsga import Nsga
 from metamoo.algorithms.nsga2 import Nsga2
 from metamoo.algorithms.nsga3 import Nsga3
-from metamoo.visualizer.scatter import ScatterPlot
-from metamoo.visualizer.heatmap import HeatmapPlot
-from metamoo.visualizer.radar import RadarPlot
-from metamoo.visualizer.histogram import HistogramPlot
-from metamoo.visualizer.tradeoff import TradeOffPlot
-from metamoo.visualizer.surface import SurfacePlot
-from metamoo.visualizer.coordinate import ParallelCoordinatePlot
+from metamoo.algorithms.mopso import MO_PSO
