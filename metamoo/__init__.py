@@ -25,4 +25,4 @@ from metamoo.core.crossover import UniformCrossover, ArithmeticCrossover, OnePoi
 from metamoo.algorithms.nsga import Nsga
 from metamoo.algorithms.nsga2 import Nsga2
 from metamoo.algorithms.nsga3 import Nsga3
-from metamoo.algorithms.mopso import MO_PSO
+from metamoo.algorithms.mopso import MOPSO
