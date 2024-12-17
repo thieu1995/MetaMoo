@@ -9,7 +9,7 @@ from metamoo.utils.ref_point import generate_reference_points
 from metamoo.core.selector import Nsga3Selector
 
 
-class Nsga3(Optimizer):
+class NSGA3(Optimizer):
     def __init__(self, epoch, pop_size, crossover=None, mutator=None, n_divisions=10,
                  seed=None, repairer=None, *args, **kwargs):
         super().__init__(seed, repairer, *args, **kwargs)
