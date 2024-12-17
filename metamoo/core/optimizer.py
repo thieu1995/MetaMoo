@@ -9,7 +9,8 @@ import time
 import numpy as np
 from metamoo.core.repairer import BoundRepair
 from metamoo.core.prototype import Agent
-from metamoo.utils.pareto import non_dominated_sorting as nds
+from metamoo.utils.distance import calculate_crowding_distance
+from metamoo.utils import pareto
 
 
 class Optimizer:
@@ -19,7 +20,7 @@ class Optimizer:
         self.repairer = repairer
         self.epoch, self.pop_size = None, None
         self.problem, self.pop = None, None
-        self.fronts_indexes, self.fronts_sorted = None, None
+        self.fronts_indexes, self.fronts_sorted, self.archive = None, None, None
         self.nfe_per_epoch, self.nfe_counter = 0, 0
 
     def pre_initialization_hook(self):
@@ -104,11 +105,11 @@ class Optimizer:
 
     @staticmethod
     def non_dominated_sorting(agents: List[Agent]):
-        return nds(agents=agents)
+        return pareto.non_dominated_sorting(agents=agents)
 
     @staticmethod
     def find_extreme_points(agents: List[Agent]):
-        fronts_indexes, fronts_sorted = nds(agents)
+        fronts_indexes, fronts_sorted = pareto.non_dominated_sorting(agents)
         return fronts_sorted[0]
 
     def repair_agent(self, agent: Agent) -> Agent:
@@ -129,3 +130,22 @@ class Optimizer:
         if counted:
             self.nfe_counter += 1
         return self.problem.evaluate_agent(agent)
+
+    def generate_uniform_matrix(self, lb, ub, size):
+        matrix = self.generator.uniform(lb, ub, size)
+        return matrix
+
+    @staticmethod
+    def select_leader(pop):
+        """Select a leader (global best) from the archive based on crowding distance."""
+        if len(pop) == 0:   # Raise ValueError if archive is empty
+            raise ValueError(f"Can not calculate leader for an empty population.")
+        distances = calculate_crowding_distance(pop)
+        leader_index = np.argmax(distances)
+        return pop[leader_index]
+
+    @staticmethod
+    def dominates(agent_a, agent_b) -> bool:
+        if pareto.dominates(agent_a, agent_b):
+            return True
+        return False
