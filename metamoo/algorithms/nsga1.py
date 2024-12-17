@@ -8,7 +8,7 @@ from metamoo import Optimizer, Population
 from metamoo.core.selector import NsgaSelector
 
 
-class Nsga(Optimizer):
+class NSGA1(Optimizer):
     def __init__(self, epoch, pop_size, crossover=None, mutator=None,
                  seed=None, repairer=None,  *args, **kwargs):
         super().__init__(seed, repairer, *args, **kwargs)
