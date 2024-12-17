@@ -5,6 +5,7 @@
 # --------------------------------------------------%
 
 from typing import List, Optional
+import numpy as np
 
 
 class Agent:
@@ -21,6 +22,15 @@ class Agent:
     def to_str(self):
         return f"Agent(objs={self.objectives})"
 
+    def copy(self):
+        """Custom copy method to create a shallow copy of the Agent."""
+        return Agent(
+            solution=None if self.solution is None else self.solution.copy(),
+            objectives=None if self.objectives is None else self.objectives.copy(),
+            violations=None if self.violations is None else self.violations.copy(),
+            feasible=self.feasible
+        )
+
 
 class Population:
     def __init__(self, agents: List[Agent]):
@@ -34,6 +44,18 @@ class Population:
 
     def empty_population(self):
         self.agents = []
+
+    def copy(self):
+        """Custom copy method to create a new Population object."""
+        # Create a new list of agents by calling copy() on each Agent
+        new_agents = [agent.copy() for agent in self.agents]
+        return Population(new_agents)
+
+    def get_solutions(self):
+        return np.array([agent.solution for agent in self.agents])
+
+    def get_objectives(self):
+        return np.array([agent.objectives for agent in self.agents])
 
     # def get_n_best_agents_by_objective(self, n: int, obj_index: int) -> Optional[List[Agent], Agent]:
     #     agents = sorted(self.agents, key=lambda agent: agent.objectives[obj_index])
