@@ -23,6 +23,6 @@ from metamoo.core.mutator import SwapMutator, InversionMutator, ScrambleMutator,
 from metamoo.core.repairer import BoundRepair, CircularRepair, UniformRandomRepair, GaussianRandomRepair, Repairer
 from metamoo.core.crossover import UniformCrossover, ArithmeticCrossover, OnePointCrossover, MultiPointsCrossover, Crossover
 from metamoo.algorithms.nsga1 import NSGA1
-from metamoo.algorithms.nsga2 import Nsga2
+from metamoo.algorithms.nsga2 import NSGA2
 from metamoo.algorithms.nsga3 import Nsga3
 from metamoo.algorithms.mopso import MOPSO

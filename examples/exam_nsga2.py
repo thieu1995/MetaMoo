@@ -6,7 +6,7 @@
 
 import numpy as np
 from metamoo import Problem, FloatVar
-from metamoo import Nsga2, OnePointCrossover, GaussianFlipMutator
+from metamoo import NSGA2, OnePointCrossover, GaussianFlipMutator
 from metamoo import ScatterPlot
 
 
@@ -20,7 +20,7 @@ def objective_function3(X):
     return np.sum(np.sin(X) + X**2 - 5*X)
 
 
-def run_nsga2():
+def run_model():
     # Create a multi-objective problem
     problem = Problem(
         objectives=[objective_function1, objective_function2, objective_function3],
@@ -29,7 +29,7 @@ def run_nsga2():
     SEED = 10
 
     # Initialize the NSGA-II algorithm
-    model = Nsga2(epoch=100, pop_size=50,
+    model = NSGA2(epoch=100, pop_size=50,
                  crossover=OnePointCrossover(crossover_rate=0.9, seed=SEED),
                  mutator=GaussianFlipMutator(kind="single", mutation_rate=0.1, loc=0, scale=1, seed=SEED),
                  seed=SEED)
@@ -51,4 +51,4 @@ def run_nsga2():
 
 # Run the example
 if __name__ == "__main__":
-    run_nsga2()
+    run_model()
