@@ -22,32 +22,73 @@ class Optimizer:
         self.fronts_indexes, self.fronts_sorted = None, None
         self.nfe_per_epoch, self.nfe_counter = 0, 0
 
+    def pre_initialization_hook(self):
+        """Hook before initialization starts. Subclasses can override."""
+        pass
+
     def initialization(self):
         self.pop = self.problem.generate_population(self.pop_size)
-
-    def initialize_variables(self, problem):
         if self.repairer is None:
-            self.repairer = BoundRepair(lb=problem.lb, ub=problem.ub)
+            self.repairer = BoundRepair(lb=self.problem.lb, ub=self.problem.ub)
+
+    def post_initialization_hook(self):
+        """Hook after initialization completes and before the main loop starts."""
+        pass
+
+    def before_evolution(self, epoch):
+        """Hook to allow custom logic before each evolution step."""
+        pass
+
+    def after_evolution(self, epoch):
+        """Hook to allow custom logic after each evolution step."""
+        pass
+
+    def custom_callback(self, epoch):
+        """Custom callback function for additional behavior within each epoch."""
+        pass
+
+    def finalize(self):
+        """Finalize and process results at the end of the optimization process."""
+        pass
 
     def solve(self, problem):
         self.problem = problem
+
+        # Pre-initialization hook
+        self.pre_initialization_hook()
+
         self.initialization()
-        self.initialize_variables(problem)
+
+        # Post-initialization hook
+        self.post_initialization_hook()
 
         for epoch in range(1, self.epoch+1):
             time_epoch = time.perf_counter()
 
+            # Before evolution step
+            self.before_evolution(epoch)
+
             self.evolve(epoch)
+
+            # After evolution step
+            self.after_evolution(epoch)
 
             # Update fronts
             self.fronts_indexes, self.fronts_sorted = self.non_dominated_sorting(self.pop.agents)
 
+            # Custom callback within the loop
+            self.custom_callback(epoch)
+
             time_epoch = time.perf_counter() - time_epoch
             self.printer(epoch, self.fronts_sorted, time_epoch)
+
+        # Finalize after all epochs
+        self.finalize()
 
         return self.fronts_sorted
 
     def evolve(self, epoch):
+        """Abstract method to be implemented by subclasses for evolving the population."""
         pass
 
     def callback(self):
