@@ -45,6 +45,7 @@ class Problem:
             raise TypeError(f"Invalid bounds. It should be type of {self.SUPPORTED_ARRAYS} or an instance of {self.SUPPORTED_VARS}")
         self.lb = np.concatenate([bound.lb for bound in self._bounds])
         self.ub = np.concatenate([bound.ub for bound in self._bounds])
+        self.n_dims = len(self.lb)
 
     def set_seed(self, seed: int = None) -> None:
         self.seed = seed
